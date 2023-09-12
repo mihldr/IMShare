@@ -6,6 +6,123 @@
 
 {% block content %}
     {{ parent() }}
+    <div class="col-xl-9">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-key"></i> Secret Codes
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <table id="key-table" class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Secret-Key</th>
+                                <th scope="col">Images</th>
+                                <th scope="col">Videos</th>
+                                <th scope="col">Executables</th>
+                                <th scope="col">Documents</th>
+                                <th scope="col">Active</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for key in keys %}
+                                <tr data-secret-key="{{ key.secret }}">
+                                    <td class="secret">{{ key.secret }}</td>
+                                    <td class="toggleable" data-field="allow_images"><i class="fas fa-{{ key.allowImages ? "check" : "xmark" }}"></i></td>
+                                    <td class="toggleable" data-field="allow_videos"><i class="fas fa-{{ key.allowVideos ? "check" : "xmark" }}"></i></td>
+                                    <td class="toggleable" data-field="allow_executables"><i class="fas fa-{{ key.allowExecutables ? "check" : "xmark" }}"></i></td>
+                                    <td class="toggleable" data-field="allow_documents"><i class="fas fa-{{ key.allowDocuments ? "check" : "xmark" }}"></i></td>
+                                    <td class="toggleable" data-field="is_active"><i class="fas fa-{{ key.isActive ? "check" : "xmark" }}"></i></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
-    Keys
+                <div class="d-flex justify-content-end">
+                    <button id="new-key" class="btn btn-success d-flex align-items-center gap-2">
+                        <i class="fa fa-plus-square"></i> <span>Create New Key</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3">
+        <div class="card">
+            <div class="card-header"><i class="fas fa-info"></i> Info</div>
+            <div class="card-body">
+                <p>
+                    In order to upload a file to IMShare using a HTML-POST request you have to target the url <i>....{# TODO #}</i><br>
+                    Your request must contain a specific header called <i>secret</i> using the secret-key as the value.<br>
+                    Also your body type has to be <i>multipart/form-data</i>
+                </p>
+                <p>
+                    The secret keys permission states are clickable.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts_end %}
+    {{ parent() }}
+
+    <script>
+        function createKeyRow(key) {
+            let placeholder = document.createElement("tbody")
+
+            placeholder.innerHTML = `
+                <tr data-secret-key="${key.secret}">
+                    <td class="secret">${key.secret}</td>
+                    <td class="toggleable" data-field="allow_images"><i class="fas fa-${key.allow_images ? `check` : `xmark`}"></i></td>
+                    <td class="toggleable" data-field="allow_videos"><i class="fas fa-${key.allow_videos ? `check` : `xmark`}"></i></td>
+                    <td class="toggleable" data-field="allow_executables"><i class="fas fa-${key.allow_executables ? `check` : `xmark`}"></i></td>
+                    <td class="toggleable" data-field="allow_documents"><i class="fas fa-${key.allow_documents ? `check` : `xmark`}"></i></td>
+                    <td class="toggleable" data-field="is_active"><i class="fas fa-${key.is_active ? `check` : `xmark`}"></i></td>
+                </tr>
+            `
+
+            return placeholder.firstElementChild
+        }
+
+        {# [Event Listener] Change permission state of a key #}
+        document.addEventListener('click', async function(event) {
+            if(!event.target.matches("#key-table tbody td.toggleable i"))
+                return
+
+            try {
+                let field = event.target.parentNode.getAttribute("data-field");
+                let row = event.target.closest("tr")
+                let currentlyEnabled = event.target.getAttribute("class").includes("check")
+
+                let data = {}
+                data[field] = !currentlyEnabled
+
+                let response = await fetch(`{{ path('api_key_patch') }}/${row.getAttribute("data-secret-key")}`, {
+                    method: "PATCH",
+                    body: JSON.stringify(data)
+                })
+                let responseJSON = await response.json()
+
+                row.replaceWith(createKeyRow(responseJSON))
+            } catch(e) {
+                console.log(e)
+                alert("Error when patching a key")
+            }
+        })
+
+        {# [Event Listener] Create a new key #}
+        document.querySelector("#new-key").addEventListener('click', async () => {
+            try {
+                {# Generate a new key #}
+                let response = await fetch("{{ path('api_key_put') }}", {method: 'PUT'})
+                let responseJSON = await response.json()
+
+                document.querySelector("#key-table tbody").appendChild(createKeyRow(responseJSON))
+            } catch(e) {
+                console.log(e)
+                alert("Error when generating a key")
+            }
+        })
+    </script>
 {% endblock %}

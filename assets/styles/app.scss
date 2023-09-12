@@ -6,3 +6,8 @@ body, html {
     margin: 0;
     padding: 0;
 }
+
+#key-table td i,
+#key-table td svg {
+    cursor: pointer;
+}

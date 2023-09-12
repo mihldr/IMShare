@@ -33,9 +33,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'uploaded_by', targetEntity: Upload::class)]
     private Collection $uploads;
 
+    #[ORM\OneToMany(mappedBy: 'generated_by', targetEntity: Key::class)]
+    private Collection $secrets;
+
     public function __construct()
     {
         $this->uploads = new ArrayCollection();
+        $this->secrets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -132,6 +136,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($upload->getUploadedBy() === $this) {
                 $upload->setUploadedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Key>
+     */
+    public function getSecrets(): Collection
+    {
+        return $this->secrets;
+    }
+
+    public function addSecret(Key $secret): static
+    {
+        if (!$this->secrets->contains($secret)) {
+            $this->secrets->add($secret);
+            $secret->setGeneratedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSecret(Key $secret): static
+    {
+        if ($this->secrets->removeElement($secret)) {
+            // set the owning side to null (unless already changed)
+            if ($secret->getGeneratedBy() === $this) {
+                $secret->setGeneratedBy(null);
             }
         }
 

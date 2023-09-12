@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Key;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -38,9 +41,13 @@ class PanelController extends AbstractController
     }
 
     #[Route('/panel/keys', name: 'app_panel_keys')]
-    public function keys(): Response
+    public function keys(ManagerRegistry $doctrine, Security $security): Response
     {
-        return $this->render('panel/keys/keys.html.twig', []);
+        $keys = $doctrine->getRepository(Key::class)->findBy(["generated_by" => $security->getUser()], ["id" => "DESC"]);
+
+        return $this->render('panel/keys/keys.html.twig', [
+            "keys" => $keys
+        ]);
     }
 
     #[Route('/panel/stats', name: 'app_panel_stats')]

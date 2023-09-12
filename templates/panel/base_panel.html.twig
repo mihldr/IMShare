@@ -24,7 +24,14 @@
         </div>
 
         <div id="content">
-            {% block content %}{% endblock %}
+            <div class="container-fluid">
+                <h1 class="mt-4">{{ constant('App\\Controller\\PanelController::PANEL_NAVBAR_MENU')[app.current_route] }}</h1>
+                <hr>
+                <div class="row">
+
+                {% block content %}{% endblock %}
+                </div>
+            </div>
         </div>
     </main>
 {% endblock %}
