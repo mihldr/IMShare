@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Panel{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <main class="d-flex h-100">
+        {# Credits: https://getbootstrap.com/docs/5.0/examples/sidebars/ #}
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark h-100" style="width: 280px;">
+            <a href="{{ path('app_panel_home') }}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <span class="fs-4">IMShare</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="{{ path('app_panel_home') }}" class="nav-link active" aria-current="page">
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ path('app_panel_gallery') }}" class="nav-link text-white">
+                        Gallery
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ path('app_panel_keys') }}" class="nav-link text-white">
+                        Keys
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ path('app_panel_stats') }}" class="nav-link text-white">
+                        Stats
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+{% endblock %}
