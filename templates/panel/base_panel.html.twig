@@ -13,29 +13,13 @@
             </a>
             <hr>
             <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item">
-                    <a href="{{ path('app_panel_home') }}" class="nav-link active" aria-current="page">
-                        Home
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ path('app_panel_gallery') }}" class="nav-link text-white">
-                        Gallery
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ path('app_panel_keys') }}" class="nav-link text-white">
-                        Keys
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ path('app_panel_stats') }}" class="nav-link text-white">
-                        Stats
-                    </a>
-                </li>
+                {% for routeName, displayName in constant('App\\Controller\\PanelController::PANEL_NAVBAR_MENU') %}
+                    <li class="nav-item">
+                        <a href="{{ path(routeName) }}" class="nav-link {{ app.current_route == routeName ? 'active' : 'text-white' }}">
+                            {{ displayName }}
+                        </a>
+                    </li>
+                {% endfor %}
             </ul>
         </div>
 

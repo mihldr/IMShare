@@ -8,6 +8,17 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PanelController extends AbstractController
 {
+    /**
+     *  Define front-ends sidebar links here,
+     *  where key is route name and value is the display name
+     */
+    const PANEL_NAVBAR_MENU = [
+        'app_panel_home' => 'Home',
+        'app_panel_gallery' => 'Gallery',
+        'app_panel_keys' => 'Keys',
+        'app_panel_stats' => 'Statistics'
+    ];
+
     #[Route('/', name: 'app_panel_redirect')]
     public function redirectToPanel(): Response
     {
