@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} - Login
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <div id="page-wrapper" class="h-100 w-100 d-flex justify-content-center align-items-center">
+        <div id="login-wrapper" class="container">
+            <div class="row d-flex justify-content-center">
+                <div class="col-6">
+                    <div class="card p-2">
+                        <form method="post" action="{{ path('login') }}">
+                            <label for="input-username" class="form-label mb-0">Username</label>
+                            <input id="input-username" name="_username" type="text" class="form-control mb-2" aria-describedby="username-help" value="{{ lastUsername ? lastUsername : "" }}">
+
+                            <label for="input-password" class="form-label mb-0">Password</label>
+                            <input id="input-password" name="_password" type="password" class="form-control mb-2">
+
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                            <input id="input-submit" type="submit" class="form-control btn btn-info" value="Login">
+
+                            {% if loginError %}
+                                <div class="d-flex justify-content-center mt-2">
+                                    <span class="text-danger">{{ loginError.message() }}</span>
+                                </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
