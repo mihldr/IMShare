@@ -22,7 +22,7 @@ services:
 
     App\Service\UploadService\FileSystemUploadService:
         arguments:
-            $fileRepositoryPath: '%kernel.project_dir%/files/'
+            $fileRepositoryPath: '%kernel.project_dir%\files'
 
     App\Service\UploadService\UploadServiceInterface: '@App\Service\UploadService\FileSystemUploadService'
 
