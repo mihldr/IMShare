@@ -68,4 +68,6 @@
 /public/build/
 npm-debug.log
 yarn-error.log
+
+files/
 ###< symfony/webpack-encore-bundle ###

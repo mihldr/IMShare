@@ -20,5 +20,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Service\UploadService\FileSystemUploadService:
+        arguments:
+            $fileRepositoryPath: '%kernel.project_dir%/files/'
+
+    App\Service\UploadService\UploadServiceInterface: '@App\Service\UploadService\FileSystemUploadService'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
