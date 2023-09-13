@@ -25,7 +25,7 @@ class Upload
 
     #[ORM\ManyToOne(inversedBy: 'uploads')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $uploaded_by = null;
+    private ?Key $uploaded_by = null;
 
     public function getId(): ?int
     {
@@ -68,12 +68,12 @@ class Upload
         return $this;
     }
 
-    public function getUploadedBy(): ?User
+    public function getUploadedBy(): ?Key
     {
         return $this->uploaded_by;
     }
 
-    public function setUploadedBy(?User $uploaded_by): static
+    public function setUploadedBy(?Key $uploaded_by): static
     {
         $this->uploaded_by = $uploaded_by;
 

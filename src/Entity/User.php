@@ -30,15 +30,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\OneToMany(mappedBy: 'uploaded_by', targetEntity: Upload::class)]
-    private Collection $uploads;
-
     #[ORM\OneToMany(mappedBy: 'generated_by', targetEntity: Key::class)]
     private Collection $secrets;
 
     public function __construct()
     {
-        $this->uploads = new ArrayCollection();
         $this->secrets = new ArrayCollection();
     }
 
@@ -110,36 +106,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
-    }
-
-    /**
-     * @return Collection<int, Upload>
-     */
-    public function getUploads(): Collection
-    {
-        return $this->uploads;
-    }
-
-    public function addUpload(Upload $upload): static
-    {
-        if (!$this->uploads->contains($upload)) {
-            $this->uploads->add($upload);
-            $upload->setUploadedBy($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUpload(Upload $upload): static
-    {
-        if ($this->uploads->removeElement($upload)) {
-            // set the owning side to null (unless already changed)
-            if ($upload->getUploadedBy() === $this) {
-                $upload->setUploadedBy(null);
-            }
-        }
-
-        return $this;
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\KeyRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -39,6 +41,14 @@ class Key
 
     #[ORM\Column]
     private ?bool $allow_executables = null;
+
+    #[ORM\OneToMany(mappedBy: 'uploaded_by', targetEntity: Upload::class)]
+    private Collection $uploads;
+
+    public function __construct()
+    {
+        $this->uploads = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -152,5 +162,35 @@ class Key
             "generated_at" => $this->generated_at->getTimestamp(),
             "generated_by" => $this->getGeneratedBy()->getUsername()
         ];
+    }
+
+    /**
+     * @return Collection<int, Upload>
+     */
+    public function getUploads(): Collection
+    {
+        return $this->uploads;
+    }
+
+    public function addUpload(Upload $upload): static
+    {
+        if (!$this->uploads->contains($upload)) {
+            $this->uploads->add($upload);
+            $upload->setUploadedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUpload(Upload $upload): static
+    {
+        if ($this->uploads->removeElement($upload)) {
+            // set the owning side to null (unless already changed)
+            if ($upload->getUploadedBy() === $this) {
+                $upload->setUploadedBy(null);
+            }
+        }
+
+        return $this;
     }
 }
