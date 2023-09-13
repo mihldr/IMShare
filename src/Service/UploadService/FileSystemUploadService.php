@@ -41,7 +41,7 @@ class FileSystemUploadService implements UploadServiceInterface {
             ->setUploadedBy($key)
             ->setName($filename)
             ->setUploadDate(new \DateTime())
-            ->setOrigName($file->getFilename());
+            ->setOrigName($file->getClientOriginalName());
     }
 
     public function generateFilename(UploadedFile $file, bool $forceRandom = false): string
