@@ -49,7 +49,7 @@ class KeyAPIController extends AbstractController
         return new JsonResponse($key->toArray());
     }
 
-    #[Route('/user_api/key/{key}', name: 'api_key_patch', methods: ['PATCH'])]
+    #[Route('/user_api/key/{key}', name: 'api_key_patch', methods: ['PATCH', 'GET'])]
     public function patch_key(Request $request, ManagerRegistry $doctrine, Security $security, string $key = null) {
         // Parse JSON content
         $jsonContent = json_decode($request->getContent(), true);
