@@ -4,8 +4,78 @@
     {{ parent() }} - Gallery
 {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .grid div {
+            width: 32%;
+            padding: 5px;
+        }
+
+        .grid div > * {
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     {{ parent() }}
 
-    Gallery
+    <div class="col-12 grid">
+        {% for upload in uploads %}
+            <div>
+                <img class="grid-item" src="/{{ upload.name }}" alt="{{ upload.origName }}">
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{# TODO: Gallery isn't perfect yet. It starts to bug out once you requests multiple pages fast after each other #}
+{% block javascripts_end %}
+    {{ parent() }}
+    <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+
+    <script>
+        const iso = new Isotope( '.grid', {
+            // options
+            percentPosition: true,
+            layoutMode: 'masonry',
+
+        });
+
+        {# Images have been loaded, re-do the masonry layout #}
+        imagesLoaded( document.querySelector('.grid'), () => {
+            iso.layout()
+        });
+
+        {# Infinite Scroll #}
+        let page = 1
+        let loading = false
+
+        window.addEventListener('scroll', async () => {
+            const scrollY = window.scrollY
+            const windowHeight = window.innerHeight
+            const contentHeight = document.documentElement.scrollHeight
+
+            if(scrollY + windowHeight >= contentHeight - 500) {
+                if(loading) return
+                else loading = true
+
+                let response = await fetch(`{{ path('api_uploads_get') }}/${page}`)
+                let responseJson = await response.json()
+
+                for(const upload of responseJson) {
+                    const newDiv = document.createElement("div")
+                    newDiv.innerHTML = `
+                        <img class="grid-item" src="/${upload.name}" alt="${upload.orig_name}">
+                    `
+                    iso.insert(newDiv)
+                }
+
+                page++
+                loading = false
+            }
+        })
+    </script>
 {% endblock %}

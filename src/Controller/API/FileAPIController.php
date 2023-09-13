@@ -3,11 +3,13 @@
 namespace App\Controller\API;
 
 use App\Entity\Key;
+use App\Entity\Upload;
 use App\Exceptions\FileNotWriteableException;
 use App\Exceptions\NotSupportedFileClassificationException;
 use App\Service\UploadService\UploadServiceInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +18,20 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FileAPIController extends AbstractController
 {
+    #[Route('/user_api/uploads/{page}', name: 'api_uploads_get', methods: ["GET"])]
+    public function api_uploads_get(Request $request, ManagerRegistry $doctrine, Security $security, int $page = 0): Response {
+        $uploads = $doctrine->getRepository(Upload::class)->getUploadsByUserPaginated($security->getUser(), $page);
+
+        $tmpArray = [];
+        foreach($uploads as $upload) {
+            $tmpArray[] = ["name" => $upload->getName(), "orig_name" => $upload->getOrigName()];
+
+            // TODO - need filetype, can't expect it to be all images/videos
+        }
+
+        return new JsonResponse($tmpArray);
+    }
+
     #[Route('/api/file/upload', name: 'api_file_upload', methods: ["POST"])]
     public function index(Request $request, ManagerRegistry $doctrine, UploadServiceInterface $uploadService): Response
     {

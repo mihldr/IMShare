@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Key;
+use App\Entity\Upload;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -35,9 +36,11 @@ class PanelController extends AbstractController
     }
 
     #[Route('/panel/gallery', name: 'app_panel_gallery')]
-    public function gallery(): Response
+    public function gallery(ManagerRegistry $doctrine, Security $security): Response
     {
-        return $this->render('panel/gallery/gallery.html.twig', []);
+        $uploads = $doctrine->getRepository(Upload::class)->getUploadsByUserPaginated($security->getUser());
+
+        return $this->render('panel/gallery/gallery.html.twig', ["uploads" => $uploads]);
     }
 
     #[Route('/panel/keys', name: 'app_panel_keys')]
