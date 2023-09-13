@@ -6,6 +6,7 @@ use App\Entity\Key;
 use App\Entity\Upload;
 use App\Exceptions\FileNotWriteableException;
 use App\Exceptions\NotSupportedFileClassificationException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -25,4 +26,6 @@ interface  UploadServiceInterface {
      * @return string
      */
     public function generateFilename(UploadedFile $file, bool $forceRandom): string;
+
+    public function getFile(string $identifier): BinaryFileResponse;
 }

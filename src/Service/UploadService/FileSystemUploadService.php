@@ -9,6 +9,8 @@ use App\Exceptions\NotSupportedFileClassificationException;
 use App\Service\RandomService;
 use App\Util\FileClassification;
 use Doctrine\Persistence\ManagerRegistry;
+use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileSystemUploadService implements UploadServiceInterface {
@@ -63,5 +65,24 @@ class FileSystemUploadService implements UploadServiceInterface {
         }
 
         return $baseName . "." . $extension;
+    }
+
+    public function getFile(string $identifier): BinaryFileResponse
+    {
+        $targetFile = $this->fileRepositoryPath . "\\" . $identifier;
+
+        // Check if attack is happening using relative path
+        if(!($targetFile == realpath($this->fileRepositoryPath . "\\" . $identifier)))
+            throw new InvalidArgumentException();
+
+        // Check if file exists in database
+        $dbFile = $this->doctrine->getRepository(Upload::class)->findOneBy(["name" => $identifier]);
+        if(!$dbFile) throw new InvalidArgumentException();
+
+        // Check if file exists on disc
+        if(!file_exists($targetFile))
+            throw new InvalidArgumentException("Hmmm2");
+
+        return new BinaryFileResponse($targetFile);
     }
 }
