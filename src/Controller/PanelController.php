@@ -25,7 +25,7 @@ class PanelController extends AbstractController
     #[Route('/', name: 'app_panel_redirect')]
     public function redirectToPanel(): Response
     {
-        return $this->redirectToRoute("app_panel");
+        return $this->redirectToRoute("app_panel_home");
     }
 
     #[Route('/panel', name: 'app_panel_home')]
