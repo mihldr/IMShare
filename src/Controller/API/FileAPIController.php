@@ -45,7 +45,7 @@ class FileAPIController extends AbstractController
         } catch(NotSupportedFileClassificationException $e) {
             return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch(FileException $e) {
-            return new JsonResponse(["error" => "File could not moved to final destination."], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse(["error" => "Could not move file to final destination."], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
