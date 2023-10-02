@@ -22,6 +22,7 @@
                                 <th scope="col">Executables</th>
                                 <th scope="col">Documents</th>
                                 <th scope="col">Active</th>
+                                <th scope="col">Configs</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -33,6 +34,11 @@
                                     <td class="toggleable" data-field="allow_executables"><i class="fas fa-{{ key.allowExecutables ? "check" : "xmark" }}"></i></td>
                                     <td class="toggleable" data-field="allow_documents"><i class="fas fa-{{ key.allowDocuments ? "check" : "xmark" }}"></i></td>
                                     <td class="toggleable" data-field="is_active"><i class="fas fa-{{ key.isActive ? "check" : "xmark" }}"></i></td>
+                                    <td>
+                                        <a class="sharex-config" href="{{ path('api_generate_sharex_conf') }}/{{ key.secret }}" download="IMShareConfig_{{ key.secret[:5] }}.sxcu" title="ShareX">
+                                            <img src="{{ asset('build/img/uploadapps/sharex.png') }}" height="16" alt="ShareX"/>
+                                        </a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -79,6 +85,11 @@
                     <td class="toggleable" data-field="allow_executables"><i class="fas fa-${key.allow_executables ? `check` : `xmark`}"></i></td>
                     <td class="toggleable" data-field="allow_documents"><i class="fas fa-${key.allow_documents ? `check` : `xmark`}"></i></td>
                     <td class="toggleable" data-field="is_active"><i class="fas fa-${key.is_active ? `check` : `xmark`}"></i></td>
+                    <td>
+                        <a class="sharex-config" href="{{ path('api_generate_sharex_conf') }}/${key.secret}" download="IMShareConfig_${key.secret.substring(0,5)}.sxcu" title="ShareX">
+                            <img src="{{ asset('build/img/uploadapps/sharex.png') }}" height="16" alt="ShareX"/>
+                        </a>
+                    </td>
                 </tr>
             `
 

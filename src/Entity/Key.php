@@ -193,4 +193,18 @@ class Key
 
         return $this;
     }
+
+    public function generate_sharex_conf(string $httpHost): array {
+        return [
+            "Version" => "15.0.0",
+            "Name" => "IMShare",
+            "DestinationType" => "ImageUploader, FileUploader",
+            "RequestMethod" => "POST",
+            "RequestURL" => $httpHost . "/api/file/upload",
+            "Headers" => [ "secret" => $this->secret ],
+            "Body" => "MultipartFormData",
+            "FileFormName" => "file",
+            "URL" => $httpHost . "/json:success.filename"
+        ];
+    }
 }

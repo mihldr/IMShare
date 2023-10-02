@@ -9,7 +9,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -77,5 +76,19 @@ class KeyAPIController extends AbstractController
         $doctrine->getManager()->flush();
 
         return new JsonResponse($key->toArray());
+    }
+
+
+    #[Route('/user_api/config/sharex/{secret}', name: 'api_generate_sharex_conf', methods: ['GET'])]
+    public function sharex_config(ManagerRegistry $doctrine, Security $security, Request $r, string $secret = ""): Response
+    {
+        $key = $doctrine->getRepository(Key::class)->findOneBy(["generated_by" => $security->getUser(), "secret" => $secret], ["generated_at" => "DESC"]);
+        if(!$key) return new Response(null, 404);
+
+        return new Response(
+            json_encode($key->generate_sharex_conf($r->getSchemeAndHttpHost()), JSON_UNESCAPED_SLASHES),
+            200,
+            [ "Content-Type" => "application/json" ]
+        );
     }
 }
